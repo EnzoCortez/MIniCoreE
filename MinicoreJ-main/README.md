@@ -1,6 +1,6 @@
 Proyecto Comisiones
 
-Autor: Jonathan Granja
+Autor: Enzo Cortez
 
 Descripción
 
@@ -81,8 +81,5 @@ python app.py
 Abrir el navegador y acceder a http://127.0.0.1:5000/
 
 Autor
+
 Enzo Cortez
-
-Autor
-
-Jonathan Granja
