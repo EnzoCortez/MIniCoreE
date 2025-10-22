@@ -75,8 +75,15 @@ def home():
 
 @app.route('/comisiones', methods=['POST'])
 def mostrar_comisiones():
-    fecha_inicio = datetime.strptime("2025-06-01", "%Y-%m-%d")
-    fecha_fin = datetime.strptime("2025-07-01", "%Y-%m-%d")
+    # Recibir fechas desde el formulario
+    fecha_inicio_str = request.form.get('fecha_inicio')
+    fecha_fin_str = request.form.get('fecha_fin')
+
+    try:
+        fecha_inicio = datetime.strptime(fecha_inicio_str, "%Y-%m-%d")
+        fecha_fin = datetime.strptime(fecha_fin_str, "%Y-%m-%d")
+    except Exception as e:
+        return f"Error en formato de fecha: {e}"
 
     resultados = (
         db.session.query(
@@ -90,7 +97,6 @@ def mostrar_comisiones():
         .all()
     )
 
-    # Agregamos la comisión calculada
     resumen = []
     for r in resultados:
         comision = calcular_comision(r.total_ventas)
@@ -101,11 +107,13 @@ def mostrar_comisiones():
             "comision": comision
         })
 
-    return render_template('comision.html', comision=resumen)
+    return render_template('comision.html', comision=resumen,
+                           fecha_inicio=fecha_inicio_str, fecha_fin=fecha_fin_str)
 
 # MAIN
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         insertar_datos_de_prueba()
-    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    # Escuchar todas las interfaces y puerto dinámico de Render
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
